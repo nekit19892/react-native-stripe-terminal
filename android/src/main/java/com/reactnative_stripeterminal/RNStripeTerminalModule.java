@@ -690,8 +690,18 @@ public class RNStripeTerminalModule extends ReactContextBaseJavaModule implement
     }
 
     @ReactMethod
-    public void clearCachedCredentials() {
-        Terminal.getInstance().clearCachedCredentials();
+    public void clearCachedCredentials(com.facebook.react.bridge.Callback callback) {
+        try {
+            Terminal.getInstance().clearCachedCredentials();
+            WritableMap writableMap = Arguments.createMap();
+            writableMap.putBoolean("isCleared", true);
+            callback.invoke(writableMap);
+        }
+        catch (Exception e) {
+            WritableMap writableMap = Arguments.createMap();
+            writableMap.putBoolean("isCleared", false);
+            callback.invoke(writableMap);
+        }
     }
 
     @ReactMethod
