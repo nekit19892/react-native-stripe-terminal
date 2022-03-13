@@ -115,6 +115,25 @@ class StripeTerminal {
     });
   }
 
+  changeToken({ fetchConnectionToken }) { 
+    fetchConnectionToken()
+        .then((token) => {
+          if (token) {
+            RNStripeTerminal.setConnectionToken(token, null);
+          } else {
+            throw new Error(
+              "User-supplied `fetchConnectionToken` resolved successfully, but no token was returned."
+            );
+          }
+        })
+        .catch((err) =>
+          RNStripeTerminal.setConnectionToken(
+            null,
+            err.message || "Error in user-supplied `fetchConnectionToken`."
+          )
+        );
+  }
+
   initialize({ fetchConnectionToken }) {
     this._fetchConnectionToken = fetchConnectionToken;
     return new Promise((resolve, reject) => {
@@ -161,6 +180,18 @@ class StripeTerminal {
 
   installUpdate() {
     return RNStripeTerminal.installUpdate();
+  }
+
+  clearCreditians() { 
+    return new Promise((resolve, reject) => { 
+      RNStripeTerminal.clearCachedCredentials((status) => { 
+         if (status.isCleared === true) {
+            resolve();
+          } else {
+            reject('Clear Error');
+          }
+      })
+    })
   }
 
   connectReader(serialNumber, locationId) {
